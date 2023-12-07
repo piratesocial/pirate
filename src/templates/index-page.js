@@ -46,7 +46,7 @@ export const query = graphql`
 
 export const Head = () => (
   <>
-    <body className="archivepage utilitypage" />
+    <body className="homepage utilitypage" />
   </>
 )
 
