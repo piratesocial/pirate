@@ -1,17 +1,17 @@
-// HomePage.js
-
+// src/templates/index-page.js
 import React from 'react';
-import { graphql } from 'gatsby'; // Import graphql from 'gatsby'
+import { graphql } from 'gatsby';
 import Layout from '../components/siteLayout';
-import useSiteMetadata from '../hooks/SiteMetadata';
 import HomePosts from '../components/homeposts';
-import Seo from "../components/seo"
-import { getSrc } from "gatsby-plugin-image"
+import { Helmet } from 'react-helmet';
+import useSiteMetadata from '../hooks/SiteMetadata';
+
 export const query = graphql`
-  query {
+  query HomePostsQuery($homecount: Int) {
     allMarkdownRemark(
       filter: { frontmatter: { template: { eq: "blog-post" } } }
-      sort: { frontmatter: { date: ASC } }
+      sort: { fields: [frontmatter___spotlight, frontmatter___date], order: [DESC, DESC] }
+      limit: $homecount
     ) {
       edges {
         node {
@@ -27,46 +27,28 @@ export const query = graphql`
             }
             featuredImage {
               childImageSharp {
-                gatsbyImageData(
-                  quality: 80
-                  placeholder: BLURRED
-                  formats: [AUTO, WEBP, AVIF]
-                )
+                gatsbyImageData(quality: 80, placeholder: BLURRED, formats: [AUTO, WEBP, AVIF])
               }
             }
           }
         }
       }
-      group(field: { frontmatter: { tags: SELECT } }) {
-        fieldValue
-      }
     }
   }
 `;
 
-export const Head = () => (
-  <>
-    <body className="homepage utilitypage" />
-  </>
-)
 
-const HomePage = ({ data }) => {
+const HomePage = ({ data, pageContext }) => {
   const { showNav } = useSiteMetadata();
-  const { image } = useSiteMetadata();
-  const { titleDefault } = useSiteMetadata();
-  const { description } = useSiteMetadata();
   const { siteUrl } = useSiteMetadata();
-  
+  // const { homecount } = pageContext;
+
   return (
     <Layout>
-  <Seo
-        title={titleDefault}
-        description={description}
-        image={ siteUrl + getSrc(image) }
-      />
-
-
-
+      <Helmet>
+        <body className="homepage utilitypage" />
+      </Helmet>
+      {siteUrl}
       {showNav ? (
         <div className='spacer' style={{ height: '70px', border: '0px solid yellow' }}></div>
       ) : (
